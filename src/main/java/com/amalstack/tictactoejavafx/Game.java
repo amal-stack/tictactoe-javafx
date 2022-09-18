@@ -11,7 +11,8 @@ import java.util.Optional;
 import java.util.stream.IntStream;
 
 /**
- * Represents a single instance of a game.
+ * Represents an instance of a game.
+ * @author Amal Krishna
  */
 public class Game {
     private final Board board = new Board();
@@ -50,11 +51,14 @@ public class Game {
     }
 
     public boolean isComplete() {
+        return isWinning() || board.isFull();
+    }
+
+    private boolean isWinning() {
         return IntStream.range(0, 3)
                 .anyMatch(n -> board.isRowMarked(n) || board.isColumnMarked(n))
                 || board.isLeftDiagonalMarked()
-                || board.isRightDiagonalMarked()
-                || board.isFull();
+                || board.isRightDiagonalMarked();
     }
 
     public void start() {
@@ -104,7 +108,7 @@ public class Game {
         for (var listener : completedListeners) {
             listener.onGameComplete(
                     new GameCompletedEvent(
-                            new Result(this, nextToPlay)
+                            new Result(this, isWinning() ? nextToPlay : null)
                     )
             );
         }
